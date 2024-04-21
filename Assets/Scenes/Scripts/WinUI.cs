@@ -26,7 +26,7 @@ public class WinUI : MonoBehaviour
 
     private void OnWinEvent(Mark mark, Color color)
     {
-        uiWinnerText.text = mark.ToString() + " Wins";
+        uiWinnerText.text = (mark == Mark.None) ? "Nobody Wins" : mark.ToString() + " Wins";
         uiWinnerText.color = color;
 
         uiCanvas.SetActive(true);

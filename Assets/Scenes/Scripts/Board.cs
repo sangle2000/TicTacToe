@@ -25,6 +25,8 @@ public class Board : MonoBehaviour
 
     private LineRenderer lineRenderer;
 
+    private int markCount = 0;
+
     private Camera cam;
 
     private Mark currentMark;
@@ -69,6 +71,8 @@ public class Board : MonoBehaviour
 
             box.SetAsMarked(GetSprite(), currentMark, GetColor());
 
+            markCount++;
+
             // Check if anybody win
             bool won = CheckIfWin();
 
@@ -76,6 +80,16 @@ public class Board : MonoBehaviour
                 if(OnWinAction != null)
                 {
                     OnWinAction.Invoke(currentMark, GetColor());
+                }
+                canPlay = false;
+                return;
+            }
+
+            if (markCount == 9)
+            {
+                if (OnWinAction != null)
+                {
+                    OnWinAction.Invoke(Mark.None, Color.white);
                 }
                 canPlay = false;
                 return;

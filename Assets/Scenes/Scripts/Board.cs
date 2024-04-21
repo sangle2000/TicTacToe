@@ -49,17 +49,21 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (canPlay && Input.GetMouseButtonUp(0))
+        if (Input.touchCount > 0)
         {
-            Vector2 touchPosition = cam.ScreenToWorldPoint(Input.mousePosition);
-
-            Collider2D hit = Physics2D.OverlapCircle(touchPosition, touchRadius, boxesLayerMark);
-
-            //box is touched
-            if (hit)
+            Touch touch = Input.GetTouch(0);
+            if (canPlay && (touch.phase == TouchPhase.Ended))
             {
-                HitBox(hit.GetComponent<Box>());
-            } 
+                Vector2 touchPosition = cam.ScreenToWorldPoint(touch.position);
+
+                Collider2D hit = Physics2D.OverlapCircle(touchPosition, touchRadius, boxesLayerMark);
+
+                //box is touched
+                if (hit)
+                {
+                    HitBox(hit.GetComponent<Box>());
+                } 
+            }
         }
     }
 

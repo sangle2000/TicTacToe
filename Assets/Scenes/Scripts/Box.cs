@@ -28,6 +28,5 @@ public class Box : MonoBehaviour
 
         // Disable the CircleConllider2D (to avoid marking it twice)
         GetComponent<CircleCollider2D>().enabled = false;
-
     }
 }

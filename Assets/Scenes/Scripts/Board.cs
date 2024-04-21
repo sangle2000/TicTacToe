@@ -5,16 +5,94 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     [Header("Input Settings: ")]
-    // [SerializeField] private Layer
+    [SerializeField] private LayerMask boxesLayerMark;
+    [SerializeField] private float touchRadius;
+
+    [Header("Mark Sprites: ")]
+    [SerializeField] private Sprite spriteX;
+    [SerializeField] private Sprite spriteO;
+
+    [Header("Mark Color: ")]
+    [SerializeField] private Color colorX;
+    [SerializeField] private Color colorO;
+
+    public Mark[] marks;
+    private Camera cam;
+    private Mark currentMark;
     // Start is called before the first frame update
     void Start()
     {
-        
+        cam = Camera.main;
+
+        currentMark = Mark.X;
+
+        marks = new Mark[9];
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetMouseButtonUp(0))
+        {
+            Vector2 touchPosition = cam.ScreenToWorldPoint(Input.mousePosition);
+
+            Collider2D hit = Physics2D.OverlapCircle(touchPosition, touchRadius, boxesLayerMark);
+
+            //box is touched
+            if (hit)
+            {
+                HitBox(hit.GetComponent<Box>());
+            } 
+        }
+    }
+
+    private void HitBox(Box box)
+    {
+        if (!box.isMarked)
+        {
+            marks[box.index] = currentMark;
+
+            box.SetAsMarked(GetSprite(), currentMark, GetColor());
+
+            // Check if anybody win
+            bool won = CheckIfWin();
+
+            if (won){
+                Debug.Log(currentMark.ToString() + " Win.");
+                return;
+            }
+
+            SwitchPlayer();
+        }
+    }
+
+    private bool CheckIfWin()
+    {
+        return AreBoxesMatched(0, 1, 2) || AreBoxesMatched(3, 4, 5) || AreBoxesMatched(6, 7, 8) ||
+            AreBoxesMatched(0, 3, 6) || AreBoxesMatched(1, 4, 7) || AreBoxesMatched(2, 5, 8) ||
+            AreBoxesMatched(0, 4, 8) || AreBoxesMatched(2, 4, 6);
+    }
+
+    private bool AreBoxesMatched(int i, int j, int k)
+    {
+        Mark m = currentMark;
+        bool matched = (marks[i] == m && marks[j] == m && marks[k] == m);
+
+        return matched;
+    }
+
+    private void SwitchPlayer()
+    {
+        currentMark = (currentMark == Mark.X) ? Mark.O : Mark.X;
+    }
+
+    private Color GetColor()
+    {
+        return (currentMark == Mark.X) ? colorX : colorO;
+    }
+
+    private Sprite GetSprite()
+    {
+        return (currentMark == Mark.X) ? spriteX : spriteO;
     }
 }
